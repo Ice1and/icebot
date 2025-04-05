@@ -70,7 +70,6 @@ def encrypted_string(b, p, m) -> str:
     # 用空格连接所有加密块
     return " ".join(encrypted_chunks)
 
-
 def get_c(a: str) -> str:
     # 公钥指数
     public_exponent = "010001"
@@ -91,25 +90,3 @@ def get_encrypt_data(text: str) -> Dict[str, str]:
     h["params"] = get_b(get_b(text, g), i)
     h["encSecKey"] = get_c(i)
     return h
-
-#
-# async def test():
-#     url = "https://music.163.com/weapi/search/suggest/web?csrf_token=131db2e1e612612cf9401298e411c1f3"
-#     headers = {
-#         "Referer": "https://music.163.com/",
-#         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-#     }
-#     for i in range(100):
-#         form_data = get_encrypt_data('{"s":"Does It Feel","limit":"8","csrf_token":"131db2e1e612612cf9401298e411c1f3"}')
-#         async with aiohttp.ClientSession(headers=headers) as async_session:
-#             async with async_session.post(url=url, data=form_data) as resp:
-#                 try:
-#                     resp = json.loads(await resp.text())
-#                     print(resp["result"]["songs"][0]["id"])
-#                 except json.decoder.JSONDecodeError:
-#                     print(form_data)
-#                     print(await resp.text())
-#
-#
-# if __name__ == '__main__':
-#     asyncio.run(test())
