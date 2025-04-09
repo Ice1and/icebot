@@ -1,0 +1,7 @@
+nonebot2
+nonebot-adapter-onebot
+openai~=1.70.0
+aiohttp~=3.11.16
+tomlkit~=0.13.2
+pycryptodome~=3.22.0
+pydantic~=2.11.2

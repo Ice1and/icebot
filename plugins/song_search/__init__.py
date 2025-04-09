@@ -24,7 +24,7 @@ choose_song_responder = on_command(
     rule=check_message_type,
     priority=10,
     force_whitespace=True,
-    block=True
+    block=False,
 )
 
 
