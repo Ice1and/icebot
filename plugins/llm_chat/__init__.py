@@ -10,7 +10,7 @@ from nonebot.rule import to_me
 from nonebot.plugin import PluginMetadata
 from nonebot.log import logger
 
-from .config import Config
+from .test_config import Config
 from .database_tools import (
     query_recent_history_message,
     insert_messages_to_table
