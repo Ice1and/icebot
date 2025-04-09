@@ -1,8 +1,0 @@
-__pycache__
-tests/
-.venv/
-.idea/
-*.log
-*.db
-
-plugins/message_backup/
