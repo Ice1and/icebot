@@ -1,5 +1,4 @@
 [tool.nonebot]
 plugins = [
-    "plugins.llm_chat",
-    "plugins.song_search"
+    "plugins.llm_chat"
 ]
