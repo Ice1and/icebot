@@ -10,7 +10,7 @@ from nonebot.rule import to_me
 from nonebot.plugin import PluginMetadata
 from nonebot.log import logger
 
-from .test_config import Config
+from .config import Config
 from .database_tools import (
     query_recent_history_message,
     insert_messages_to_table
@@ -83,7 +83,7 @@ async def llm_chat(bot: Bot, event: Event) -> None:
 
         # 获取大模型回复并返回给用户
         llm_reply = await get_completion(history_messages)
-        llm_reply_message = llm_reply.choices[0].message.content
+        llm_reply_message = llm_reply.choices[0].message.content.strip()
         await bot.call_api("send_group_msg", group_id=group_id, message=llm_reply_message)
 
         # 将用户消息和大模型回复消息一同存入数据库
