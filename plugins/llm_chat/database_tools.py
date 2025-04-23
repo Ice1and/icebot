@@ -27,13 +27,12 @@ def create_table_if_not_exists(conn: Connection, table_name: str) -> None:
         )"""
     )
 
-    # 提交事务
     conn.commit()
     cursor.close()
 
 
 # 查询最近的历史信息
-def query_recent_history_message(conn: Connection, table_name: str) -> List[Union[None, Dict[str, str]]]:
+def query_recent_history_message(conn: Connection, table_name: str) -> List[Union[any, Dict[str, str]]]:
     cursor = conn.cursor()
     recent_history_message = []
 
