@@ -7,7 +7,10 @@ get_weather_tool = {
     "type": "function",
     "function": {
         "name": "get_weather",
-        "description": "获取用户给定位置的天气、温度、气温情况",
+        "description": (
+            "获取用户给定位置的实时天气",
+            "当用户询问“天气”、“温度”、“气温”、“湿度”等相关问题时，请使用此函数。"
+        ),
         "parameters": {
             "type": "object",   # 模型返回的参数格式
             "properties": {
