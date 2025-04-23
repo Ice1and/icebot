@@ -2,8 +2,12 @@
 from datetime import datetime
 from typing import Union, List, Dict
 from sqlite3 import Connection, connect
+from json import loads, dumps
+from copy import deepcopy
 
-from openai import AsyncOpenAI, ChatCompletion
+import asyncio
+from openai import AsyncOpenAI
+from openai.types.chat import ChatCompletion, ChatCompletionMessage
 from nonebot import get_driver, get_plugin_config, on_message
 from nonebot.adapters import Bot, Event
 from nonebot.rule import to_me
@@ -15,6 +19,7 @@ from .database_tools import (
     query_recent_history_message,
     insert_messages_to_table
 )
+from .function_call_tools import tools, get_weather, functions
 
 
 __plugin_meta__ = PluginMetadata(
@@ -53,11 +58,17 @@ llm_chat_responder = on_message(
 )
 
 
-async def get_completion(messages: List[Dict[str, str]]) -> ChatCompletion:
+async def get_completion(messages: List[Union[Dict[str, str], ChatCompletionMessage]]) -> ChatCompletion:
+    for message in messages:
+        if type(message) is dict:
+            message.pop("timestamp", None)
+
     completion = await gemini_client.chat.completions.create(
         model=plugin_config.model,
-        temperature=0.4,
-        messages=messages
+        temperature=0.3,
+        messages=messages,
+        tools=tools,
+        tool_choice="auto"
     )
     return completion
 
@@ -77,23 +88,46 @@ async def llm_chat(bot: Bot, event: Event) -> None:
 
         # 将用户消息合并至历史上下文中
         history_messages = query_recent_history_message(conn=sqlite_connect, table_name=group_id)
-        history_messages.append(user_message_json)
+        history_messages.append(deepcopy(user_message_json))
 
         logger.debug(history_messages)
 
-        # 获取大模型回复并返回给用户
-        llm_reply = await get_completion(history_messages)
-        llm_reply_message = llm_reply.choices[0].message.content.strip()
+        # 获取大模型回复
+        completion = await get_completion(history_messages)
+        tool_calls_information = completion.choices[0].message.tool_calls
+        # print("tool calls: ", end="")
+        # print(tool_calls_information)
+        if tool_calls_information:
+            location = loads(tool_calls_information[0].function.arguments)["location"]
+            function_name = tool_calls_information[0].function.name
+            tool_call_id = tool_calls_information[0].id
+
+            # 执行函数
+            loop = asyncio.get_running_loop()
+            coro = functions[function_name](location)
+            result = await loop.create_task(coro)
+
+            print("result: " + result.strip())
+            history_messages.append(completion.choices[0].message)
+            history_messages.append({
+                "role": "tool",
+                "tool_call_id": tool_call_id,
+                "content": dumps(result.strip(), ensure_ascii=False)        # 需转换成JSON格式，否则报错
+            })
+            # print(history_messages)
+            completion = await get_completion(history_messages)
+
+        llm_reply_message = completion.choices[0].message.content.strip()
         await bot.call_api("send_group_msg", group_id=group_id, message=llm_reply_message)
 
         # 将用户消息和大模型回复消息一同存入数据库
         llm_reply_message_json = {
             "role": "assistant",
             "content": llm_reply_message,
-            "timestamp": datetime.fromtimestamp(llm_reply.created).strftime('%Y-%m-%d %H:%M:%S'),
+            "timestamp": datetime.fromtimestamp(completion.created).strftime('%Y-%m-%d %H:%M:%S'),
         }
         messages = [user_message_json, llm_reply_message_json]
-        # logger.debug(messages)
+        logger.debug(messages)
         insert_messages_to_table(
             conn=sqlite_connect,
             table_name=group_id,
