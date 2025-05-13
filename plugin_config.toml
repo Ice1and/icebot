@@ -1,4 +1,2 @@
 [tool.nonebot]
-plugins = [
-    "plugins.llm_chat"
-]
+plugins = []
