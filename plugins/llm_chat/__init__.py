@@ -8,7 +8,7 @@ from copy import deepcopy
 import asyncio
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessage
-from nonebot import get_driver, get_plugin_config, on_message
+from nonebot import get_driver, get_plugin_config, on_command
 from nonebot.adapters import Bot, Event
 from nonebot.rule import to_me
 from nonebot.plugin import PluginMetadata
@@ -36,7 +36,7 @@ plugin_config = get_plugin_config(Config)
 sqlite_connect: Union[None, Connection] = None
 
 gemini_client = AsyncOpenAI(
-    api_key=plugin_config.gemini_api_key,
+    api_key=plugin_config.api_key,
     base_url=plugin_config.base_url,
 )
 
@@ -51,9 +51,18 @@ async def close_sqlite_connect() -> None:
     sqlite_connect.close()
 
 
-llm_chat_responder = on_message(
-    rule=to_me(),
+async def check_message_type(event: Event) -> bool:
+    if event.message_type == "group":
+        return True
+    else:
+        return False
+
+
+llm_chat_responder = on_command(
+    'llm',
+    rule=check_message_type,
     priority=2,
+    force_whitespace=True,
     block=False
 )
 
