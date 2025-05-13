@@ -6,3 +6,4 @@ aiohttp~=3.11.16
 tomlkit~=0.13.2
 pycryptodome~=3.22.0
 pydantic~=2.11.2
+parsel==1.10.0
