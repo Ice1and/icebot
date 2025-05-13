@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class Config(BaseModel):
     # 模型配置
-    gemini_api_key: str = ""
+    api_key: str = ""
     base_url: str = ""
     model: str = ""
 
