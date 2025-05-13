@@ -40,7 +40,7 @@ def query_recent_history_message(conn: Connection, table_name: str) -> List[Unio
         create_table_if_not_exists(conn, table_name)
     else:
         results = cursor.execute(
-            f"SELECT role, content, timestamp FROM '{table_name}' ORDER BY timestamp DESC LIMIT 15"
+            f"SELECT role, content, timestamp FROM '{table_name}' ORDER BY timestamp DESC LIMIT 10"
         ).fetchall()
         # 倒置列表，[5, 4, 3, 2, 1] -> [1, 2, 3, 4, 5]
         for res in results[::-1]:
