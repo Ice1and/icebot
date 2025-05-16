@@ -1,2 +1,5 @@
 [tool.nonebot]
-plugins = []
+plugins = [
+    "plugins.choose_song",
+    "plugins.gold_price"
+]
