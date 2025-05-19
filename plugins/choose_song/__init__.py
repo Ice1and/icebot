@@ -11,7 +11,6 @@ from nonebot.params import CommandArg
 from .encrypt import get_encrypt_data
 
 
-
 async def check_message_type(event: Event) -> bool:
     if event.message_type == "group":
         return True
@@ -57,7 +56,7 @@ async def choose_song_func(bot: Bot, event: Event, message: Message = CommandArg
         }
     }
     if not song_id:
-        msg = "[IceBot] Song Search Failed"
+        msg = "[Ice] Song Search Failed."
     await bot.call_api("send_msg", message_type="group", group_id=event.group_id, message=msg)
     await choose_song_responder.finish()
 
