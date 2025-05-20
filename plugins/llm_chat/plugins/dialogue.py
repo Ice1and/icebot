@@ -95,7 +95,6 @@ class ChatBot:
         ]
 
         while True:
-            print(f"\nmessage: {messages}")
             is_use_tool = False
 
             llm_resp = await self.client.chat.completions.create(
