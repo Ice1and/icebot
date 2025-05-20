@@ -12,13 +12,13 @@ driver = get_driver()
 db_client: Optional[Connection] = None
 
 
-@driver.on_startup
+@driver.on_bot_connect
 async def connect_db():
     global db_client
     db_client = await connect(database_path)
 
 
-@driver.on_shutdown
+@driver.on_bot_disconnect
 async def close_db():
     global db_client
     await db_client.close()
