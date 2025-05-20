@@ -8,3 +8,4 @@ pycryptodome~=3.22.0
 pydantic~=2.11.2
 parsel==1.10.0
 fastmcp~=2.3.4
+aiosqlite>=0.21.0
