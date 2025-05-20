@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "webSearch": {
+      "type": "sse",
+      "command": "",
+      "args": "https://mcp.api-inference.modelscope.cn/sse/178c74f6a5564d"
+    }
+  }
+}
