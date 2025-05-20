@@ -1,5 +1,7 @@
 [tool.nonebot]
 plugins = [
+    "plugins.backup_msg",
     "plugins.choose_song",
-    "plugins.gold_price"
+    "plugins.get_recall_msg",
+    "plugins.llm_chat"
 ]
